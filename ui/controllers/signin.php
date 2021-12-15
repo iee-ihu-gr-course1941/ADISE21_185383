@@ -8,7 +8,7 @@ if (
     $userName = $_POST['username'];
     $password = $_POST['password'];
 
-    $url = $_SERVER['HTTP_REFERER'] . "app/api/users/checkPwd.php?name=" . $userName . "&password=" . $password;
+    $url = "http://localhost/ADISE21_185383/app/api/users/checkPwd.php?name=" . $userName . "&password=" . $password;
 
     $client = curl_init($url);
     curl_setopt($client, CURLOPT_RETURNTRANSFER, true);
