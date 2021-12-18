@@ -9,36 +9,26 @@ include_once '../../infrastructure/DB.php';
 include_once '../../models/Playing.php';
 include_once '../../models/Player.php';
 
-$database = new DB();
-$db = $database->getConnection();
+$conn = DB::getConnection();
 
 $data = json_decode(file_get_contents("php://input"));
 
 if ($data) {
-    $playingModel = new Playing($db);
-    $playingModel->active = 1;
-    $playingModel->phase = 1;
-    $playingModel->player_cnt = $data->player_cnt;
+    // Δημιούργησε νέο παίξιμο
 
-    $playing_id = $playingModel->add();
+    $playing_id = Playing::add($conn, 1, 1, $data->player_cnt);
 
     if($playing_id != 0){         
-        $player = new Player($db);
-        $player->id = $data->user_id;
-        $player->playing_id = $playing_id;
-        $player->playing_seqno = 1;
-        $player->playing_iscurrent = 1;
-        $player->state = 1;
+        // Πρόσθεσε τον τρέχοντα χρήστη ως παίκτη (και μάλιστα τρέχοντα)
 
-        $player->add();
+        Player::add($conn, $data->user_id, $playing_id, 1, 1);
 
         http_response_code(200);         
     } else{         
-        http_response_code(503);        
-        echo json_encode(array("error" => "Αδυναμία έναρξης παιχνιδιού!"));
-    }    
+        http_response_code(503);     
 
-    http_response_code(200);
+        echo json_encode(array("error" => "Αδυναμία έναρξης παιχνιδιού!"));
+    }
 } else {
     http_response_code(400);
     echo json_encode( array("error" => "Ελλιπή στοιχεία!"));

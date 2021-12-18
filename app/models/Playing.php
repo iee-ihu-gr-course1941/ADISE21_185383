@@ -1,40 +1,34 @@
 <?php
-class PLaying {   
-    
-    public $id;
-    public $active;
-    public $phase;
-    public $player_cnt;
+class PLaying
+{
 
-	private $conn;
+    public static function getActive($conn)
+    {
+        $stmt = $conn->prepare("SELECT * FROM playing WHERE active = '1'");
 
-	private $table = "playing";      
-	
-    public function __construct($db){
-        $this->conn = $db;
-    }	
-	
-	function getActive(){	
-		$stmt = $this->conn->prepare("SELECT * FROM ".$this->table." WHERE active = '1'");
+        $stmt->execute();
 
-		$stmt->execute();			
-		
-		$result = $stmt->get_result();		
-		
-		return $result;	
-	}
-    
-    function add(){
-        $stmt = $this->conn->prepare("
-            INSERT INTO ".$this->table."(`active`, `phase`, `player_cnt`)
-            VALUES(?,?,?)");
-        
-        $stmt->bind_param("iii", $this->active, $this->phase, $this->player_cnt);
-        
-        if($stmt->execute()){
-            return $this->conn->insert_id;
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            return $result->fetch_assoc();
+        } else {
+            return null;
         }
-     
-        return 0;		 
+    }
+
+    public static function add($conn, $active, $phase, $player_cnt)
+    {
+        $stmt = $conn->prepare("
+            INSERT INTO playing(`active`, `phase`, `player_cnt`)
+            VALUES(?,?,?)");
+
+        $stmt->bind_param("iii", $active, $phase, $player_cnt);
+
+        if ($stmt->execute()) {
+            return $conn->insert_id;
+        }
+
+        return 0;
     }
 }

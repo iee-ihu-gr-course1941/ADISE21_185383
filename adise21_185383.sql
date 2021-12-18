@@ -46,10 +46,11 @@ CREATE TABLE IF NOT EXISTS `player` (
   CONSTRAINT `FK_player_user` FOREIGN KEY (`id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table adise21_185383.player: ~0 rows (approximately)
+-- Dumping data for table adise21_185383.player: ~1 rows (approximately)
 /*!40000 ALTER TABLE `player` DISABLE KEYS */;
 INSERT INTO `player` (`id`, `playing_id`, `playing_seqno`, `playing_iscurrent`, `state`) VALUES
-	(1, 6, 1, 1, 1);
+	(1, 9, 1, 1, 1),
+	(2, 9, 1, 0, 1);
 /*!40000 ALTER TABLE `player` ENABLE KEYS */;
 
 -- Dumping structure for πίνακας adise21_185383.playing
@@ -59,12 +60,12 @@ CREATE TABLE IF NOT EXISTS `playing` (
   `phase` smallint NOT NULL DEFAULT '0' COMMENT 'Φάση (0.Αρχική, 1.Ένταξη παικτών, 2.Αρχική απόρριψη διπλών, 3.Παιχνίδι, 4.Τερματισμός)',
   `player_cnt` smallint NOT NULL DEFAULT '0' COMMENT 'Πλήθος παικτών',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci;
 
 -- Dumping data for table adise21_185383.playing: ~1 rows (approximately)
 /*!40000 ALTER TABLE `playing` DISABLE KEYS */;
 INSERT INTO `playing` (`id`, `active`, `phase`, `player_cnt`) VALUES
-	(6, 1, 1, 2);
+	(9, 1, 1, 3);
 /*!40000 ALTER TABLE `playing` ENABLE KEYS */;
 
 -- Dumping structure for πίνακας adise21_185383.user
@@ -73,13 +74,17 @@ CREATE TABLE IF NOT EXISTS `user` (
   `name` varchar(256) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `password` text CHARACTER SET utf8 COLLATE utf8_unicode_ci,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table adise21_185383.user: ~2 rows (approximately)
+-- Dumping data for table adise21_185383.user: ~6 rows (approximately)
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 INSERT INTO `user` (`id`, `name`, `password`) VALUES
 	(1, 'player1', '1'),
-	(2, 'player2', '2');
+	(2, 'player2', '2'),
+	(3, 'player3', '3'),
+	(4, 'player4', '4'),
+	(5, 'player5', '5'),
+	(6, 'player6', '6');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

@@ -1,12 +1,12 @@
 <?php
 class DB {
-	private $host = 'localhost';
-    private $user = 'root';
-    private $password = "root";
-    private $database = "adise21_185383"; 
+	private static $host = 'localhost';
+    private static $user = 'root';
+    private static $password = "root";
+    private static $database = "adise21_185383"; 
     
-    public function getConnection(){		
-		$conn = new mysqli($this->host, $this->user, $this->password, $this->database);
+    public static function getConnection(){		
+		$conn = new mysqli(self::$host, self::$user, self::$password, self::$database);
 		if($conn->connect_error){
 			die("Error failed to connect to MySQL: " . $conn->connect_error);
 		} else {

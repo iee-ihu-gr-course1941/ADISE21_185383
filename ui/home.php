@@ -8,7 +8,7 @@ if (!isset($_SESSION['signedin'])) {
 
 $config = include('config.php');
 
-$url = $config['apiUrl'] . "app/api/playings/board";
+$url = $config['apiUrl'] . "app/api/playings/board/" . $_SESSION['userId'];
 
 $client = curl_init();
 curl_setopt($client, CURLOPT_URL, $url);
@@ -17,9 +17,7 @@ $response = curl_exec($client);
 
 curl_close($client);
 
-$board = null;
 $info = null;
-
 $board = json_decode($response);
 
 if ($board == null) {
@@ -30,15 +28,13 @@ if ($board == null) {
 	if ($board->playing_phase == 0) {
 		$info = "ΧΩΡΙΣ ΠΑΙΧΝΙΔΙ";
 	} else if ($board->playing_phase == 1) {
-		if ($board->current_player_state == 0) {
+		if ($board->current_user_state == 0) {
 			$info = "ΕΝΤΑΞΗ ΠΑΙΚΤΩΝ => Θέλεις να παίξεις;";
-		}
-		else {
-			$info = "ΕΝΤΑΞΗ ΠΑΙΚΤΩΝ => Περίμενε....";
+		} else {
+			$info = "ΕΝΤΑΞΗ ΠΑΙΚΤΩΝ => Παρακαλώ, περίμενε ...";
 		}
 	}
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -63,12 +59,36 @@ if ($board == null) {
 		<h2><?= $info ?></h2>
 	</div>
 	<div class="commandbar">
-		<?php if ($board != null && $board->playing_phase == 0) { ?>
+		<?php if (
+			$board != null
+			&& $board->playing_phase == 0
+		) { ?>
 			<form action="actions/start.php" method="post" target="">
+				<label for="player_cnt">
+					Πλήθος Παικτών (2-6):
+				</label>
+				<input type="range" name="player_cnt" placeholder="Πλήθος Παικτών" id="player_cnt" min="2" max="6" value="2" step="1" oninput="onPlayerCntUpdate(value)" required>
+				<output for="player_cnt" id="player_cnt_volume">2</output>
 				<input type="submit" value="Έναρξη">
+			</form>
+		<?php } ?>
+
+		<?php if (
+			$board != null
+			&& $board->playing_phase == 1
+			&& $board->current_user_state == 0
+		) { ?>
+			<form action="actions/go.php" method="post" target="">
+				<input type="submit" value="Πάμε">
 			</form>
 		<?php } ?>
 	</div>
 </body>
+
+<script>
+	function onPlayerCntUpdate(vol) {
+		document.querySelector('#player_cnt_volume').value = vol;
+	}
+</script>
 
 </html>

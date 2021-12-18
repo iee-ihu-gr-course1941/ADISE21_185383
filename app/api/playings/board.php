@@ -5,47 +5,53 @@ include_once '../../infrastructure/DB.php';
 include_once '../../models/Playing.php';
 include_once '../../models/Player.php';
 
-$database = new DB();
-$db = $database->getConnection();
+$conn = DB::getConnection();
+
+$current_user_id = intval((isset($_GET['user_id']) && $_GET['user_id']) ? $_GET['user_id'] : '0');
 
 // Φέρε το ενεργό παίξιμο
 
-$playingModel = new Playing($db);
-$result = $playingModel->getActive();
+$playing = Playing::getActive($conn);
 
-if (
-    $result->num_rows > 0 &&
-    $playing = $result->fetch_assoc()
-) {
-    // Φέρε τον τρέχοντα παίκτη του ενεργού παιχνιδιού
+if ($playing != null) {
+    // Φέρε τον τρέχοντα παίκτη του ενεργού παιξίματος
 
-    $playerModel = new Player($db);
-    $result = $playerModel->getPlayingCurrent($playing['id']);
+    $currentPlayer = Player::getPlayingCurrent($conn, $playing['id']);
 
-    if (
-        $result->num_rows > 0 &&
-        $player = $result->fetch_assoc()
-    ) {
-        http_response_code(200);
+    // Φέρε τον παίκτη του ενεργού παιξίματος που αντιστοιχεί στον τρέχοντα χρήστη
 
+    $currentUserAsPlayer = Player::getByPlayingAndUser($conn, $playing['id'], $current_user_id);
+
+    http_response_code(200);
+
+    if ($currentUserAsPlayer != null) {
         echo json_encode(
             array(
+                "playing_id" => $playing['id'],
                 "playing_phase" => $playing['phase'],
-                "current_player_state" => $player['state']
+                "current_player_state" => $currentPlayer['state'],
+                "current_user_state" => $currentUserAsPlayer['state']
             )
         );
     } else {
-        http_response_code(503);
-
-        echo json_encode(array("error" => "Δε βρέθηκε ο τρέχων παίχτης!"));
+        echo json_encode(
+            array(
+                "playing_id" => $playing['id'],
+                "playing_phase" => $playing['phase'],
+                "current_player_state" => $currentPlayer['state'],
+                "current_user_state" => 0
+            )
+        );
     }
 } else {
     http_response_code(200);
 
     echo json_encode(
         array(
+            "playing_id" => 0,
             "playing_phase" => 0,
-            "current_player_state" => 0
+            "current_player_state" => 0,
+            "current_user_state" => 0
         )
     );
 }

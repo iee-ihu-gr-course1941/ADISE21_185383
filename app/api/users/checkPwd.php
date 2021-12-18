@@ -8,20 +8,14 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 include_once '../../infrastructure/DB.php';
 include_once '../../models/User.php';
 
-$database = new DB();
-$db = $database->getConnection();
+$conn = DB::getConnection();
 
 $data = json_decode(file_get_contents("php://input"));
 
 if ($data) {
-    $userModel = new User($db);
+    $user = User::getByName($conn, $data->username);
 
-    $result = $userModel->getByName($data->username);
-
-    if (
-        $result->num_rows > 0 &&
-        $user = $result->fetch_assoc()
-    ) {
+    if ($user != null) {
         if (strcmp($data->password, $user['password']) == 0) {
             http_response_code(200);
             echo json_encode($user);

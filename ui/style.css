@@ -67,28 +67,24 @@ body.signedin {
 .commandbar {
 	margin: 0 auto;
 }
-.commandbar h2 {
-	padding: 25px 0;
-	font-size: 22px;
-	border-bottom: 1px solid #e0e0e3;
-	color: #4a536e;
-	margin: 0 0 0 10px;
+
+.commandbar form {
+	display: inline-flex;
+	align-items: center;
 }
-.commandbar > p, .commandbar > div {
-	box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
-	margin: 25px 0;
-	padding: 25px;
-	background-color: #fff;
-}
-.commandbar > p table td, .commandbar > div table td {
-	padding: 5px;
-}
-.commandbar > p table td:first-child, .commandbar > div table td:first-child {
+
+.commandbar form input[type="submit"] {
+	padding: 15px;
+    margin-left: 20px;
+	background-color: #3274d6;
+	cursor: pointer;
 	font-weight: bold;
-	color: #4a536e;
-	padding-right: 15px;
+	color: #ffffff;
+	transition: background-color 0.2s;
 }
-.commandbar > div p {
-	padding: 5px;
-	margin: 0 0 10px 0;
+
+.commandbar output[for="player_cnt"] {
+	background:#000;
+	color:#fff; 
+	padding: .2rem;  
 }

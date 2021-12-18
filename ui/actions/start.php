@@ -5,8 +5,7 @@ $config = include('../config.php');
 
 $dataJSON = json_encode(
     array(
-        ////"player_cnt" => $_POST['player_cnt'],
-        "player_cnt" => 2,
+        "player_cnt" => $_POST['player_cnt'],
         "user_id" =>  $_SESSION['userId']
     )
 );
