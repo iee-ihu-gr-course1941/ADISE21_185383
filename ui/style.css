@@ -9,7 +9,7 @@
 	margin: 0 auto;
 	height: 100%;
 }
-.navbar div h1, .navbar div a {
+.navbar div h1, .navbar div h2, .navbar div a {
 	display: inline-flex;
 	align-items: center;
 }
@@ -21,6 +21,13 @@
 	color: #eaebed;
 	font-weight: normal;
 }
+
+.navbar div h2 {
+	color: #eaebed;
+	font-weight: bold;
+	font-style: italic;
+}
+
 .navbar div a {
 	padding: 0 20px;
 	text-decoration: none;
@@ -52,15 +59,36 @@ body.signedin {
 	padding: 25px;
 	background-color: #fff;
 }
-.infobar > p table td, .infobar > div table td {
+.infobar > div p {
+	padding: 5px;
+	margin: 0 0 10px 0;
+}
+
+.commandbar {
+	margin: 0 auto;
+}
+.commandbar h2 {
+	padding: 25px 0;
+	font-size: 22px;
+	border-bottom: 1px solid #e0e0e3;
+	color: #4a536e;
+	margin: 0 0 0 10px;
+}
+.commandbar > p, .commandbar > div {
+	box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+	margin: 25px 0;
+	padding: 25px;
+	background-color: #fff;
+}
+.commandbar > p table td, .commandbar > div table td {
 	padding: 5px;
 }
-.infobar > p table td:first-child, .infobar > div table td:first-child {
+.commandbar > p table td:first-child, .commandbar > div table td:first-child {
 	font-weight: bold;
 	color: #4a536e;
 	padding-right: 15px;
 }
-.infobar > div p {
+.commandbar > div p {
 	padding: 5px;
 	margin: 0 0 10px 0;
 }

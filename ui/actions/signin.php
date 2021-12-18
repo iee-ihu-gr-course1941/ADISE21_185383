@@ -1,18 +1,28 @@
 <?php
 session_start();
 
+$config = include('../config.php');
+
 if (
     isset($_POST['username']) && $_POST['username'] != "" &&
     isset($_POST['password']) && $_POST['password'] != ""
 ) {
-    $userName = $_POST['username'];
-    $password = $_POST['password'];
+    $dataJSON = json_encode(
+        array(
+            "username" => $_POST['username'],
+            "password" => $_POST['password']
+        )
+    );
 
-    $url = "http://localhost/ADISE21_185383/app/api/users/checkPwd.php?name=" . $userName . "&password=" . $password;
+    $url = $config['apiUrl'] . "app/api/users/checkPwd";
 
-    $client = curl_init($url);
+    $client = curl_init();
+    curl_setopt($client, CURLOPT_URL, $url);
     curl_setopt($client, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($client, CURLOPT_POSTFIELDS, $dataJSON);
     $response = curl_exec($client);
+
+    curl_close($client);
 
     $result = json_decode($response);
 
