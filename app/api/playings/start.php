@@ -8,6 +8,7 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 include_once '../../infrastructure/DB.php';
 include_once '../../models/Playing.php';
 include_once '../../models/Player.php';
+include_once '../../models/Card.php';
 
 $conn = DB::getConnection();
 
@@ -16,12 +17,29 @@ $data = json_decode(file_get_contents("php://input"));
 if ($data) {
     // Δημιούργησε νέο παίξιμο
 
-    $playing_id = Playing::add($conn, 1, 1, $data->player_cnt);
+    $playing = array(
+        "active" => 1,
+        "phase" => 1,
+        "player_cnt" => $data->player_cnt
+    );
+    
+    $playing_id = Playing::add($conn, $playing);
 
     if($playing_id != 0){         
-        // Πρόσθεσε τον τρέχοντα χρήστη ως παίκτη (και μάλιστα τρέχοντα)
+        // Πρόσθεσε τον τρέχοντα χρήστη ως παίκτη (και μάλιστα ως τρέχοντα)
 
-        Player::add($conn, $data->user_id, $playing_id, 1, 1);
+        $player = array(
+            "id" => $data->user_id,
+            "playing_id" => $playing_id,
+            "playing_iscurrent" => 1,
+            "state" => 1
+        );
+
+        Player::add($conn, $player);
+
+        // Προετοίμασε τα χαρτιά για νέο παίξιμο
+
+        Card::init($conn);
 
         http_response_code(200);         
     } else{         
