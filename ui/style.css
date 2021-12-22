@@ -88,3 +88,8 @@ body.signedin {
 	color:#fff; 
 	padding: .2rem;  
 }
+
+.cardarea {
+	margin: 0 auto;
+	background-color:#c6ffc1;
+}

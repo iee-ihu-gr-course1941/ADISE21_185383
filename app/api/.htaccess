@@ -1,5 +1,6 @@
 RewriteEngine On    # Turn on the rewriting engine
 RewriteRule ^players/add$ players/add.php [NC,L]
+RewriteRule ^players/throw$ players/throw.php [NC,L]
 RewriteRule ^playings/board/([0-9_-]*)$ playings/board.php?user_id=$1 [NC,L]
 RewriteRule ^playings/start$ playings/start.php [NC,L]
 RewriteRule ^users/checkPwd$ users/checkPwd.php [NC,L]

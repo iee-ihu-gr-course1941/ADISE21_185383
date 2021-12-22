@@ -27,16 +27,16 @@ if ($data) {
 
     // Φέρε το ενεργό παίξιμο
 
-    $playing = Playing::getActive($conn);
+    $playing = Playing::getActive($conn, $data->user_id);
 
-    // Φέρε το πλήθος των παικτών του ενεργού παιξίματος
+    // Φέρε το πλήθος των παικτών που έχουν μέχρι στιγμής ενταχθεί στο ενεργό παίξιμο
 
-    $player_cnt = Player::getPlayerCnt($conn, $data->playing_id);
+    $actual_player_cnt = Player::getActualPlayerCnt($conn, $data->playing_id);
 
     // Αν έχει συμπληρωθεί το απαιτούμενο πλήθος παικτών,
     // προχώρησε στην επόμενη φάση και μοίρασε τα χαρτιά ...
 
-    if ($playing['player_cnt'] == $player_cnt) {
+    if ($playing['player_cnt'] == $actual_player_cnt) {
         $playing['phase'] = 2;
 
         Playing::update($conn, $playing);

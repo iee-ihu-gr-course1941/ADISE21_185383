@@ -11,7 +11,7 @@ $current_user_id = intval((isset($_GET['user_id']) && $_GET['user_id']) ? $_GET[
 
 // Φέρε το ενεργό παίξιμο
 
-$playing = Playing::getActive($conn);
+$playing = Playing::getActive($conn, $current_user_id);
 
 if ($playing != null) {
     // Φέρε τον τρέχοντα παίκτη του ενεργού παιξίματος
@@ -25,12 +25,16 @@ if ($playing != null) {
     http_response_code(200);
 
     if ($currentUserAsPlayer != null) {
+        $current_user_is_current_player = $currentPlayer['id'] == $currentUserAsPlayer['id'];
+
         echo json_encode(
             array(
                 "playing_id" => $playing['id'],
                 "playing_phase" => $playing['phase'],
                 "current_player_state" => $currentPlayer['state'],
-                "current_user_state" => $currentUserAsPlayer['state']
+                "current_user_state" => $currentUserAsPlayer['state'],
+                "current_user_is_current_player" => $current_user_is_current_player,
+                "players" => $playing['players']
             )
         );
     } else {
@@ -39,7 +43,9 @@ if ($playing != null) {
                 "playing_id" => $playing['id'],
                 "playing_phase" => $playing['phase'],
                 "current_player_state" => $currentPlayer['state'],
-                "current_user_state" => 0
+                "current_user_state" => 0,
+                "current_user_is_current_player" => true,
+                "players" => $playing['players']
             )
         );
     }
@@ -51,7 +57,9 @@ if ($playing != null) {
             "playing_id" => 0,
             "playing_phase" => 0,
             "current_player_state" => 0,
-            "current_user_state" => 0
-        )
+            "current_user_state" => 0,
+            "current_user_is_current_player" => true,
+            "players" => []
+            )
     );
 }

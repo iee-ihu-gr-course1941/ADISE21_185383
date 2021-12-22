@@ -33,6 +33,18 @@ if ($board == null) {
 		} else {
 			$info = "ΕΝΤΑΞΗ ΠΑΙΚΤΩΝ => Παρακαλώ, περίμενε ...";
 		}
+	} else if ($board->playing_phase == 2) {
+		if ($board->current_user_state == 1) {
+			if ($board->current_user_is_current_player) {
+				$info = "ΑΡΧΙΚΟ ΡΙΞΙΜΟ ΔΙΠΛΩΝ => Ρίξε τα διπλά χαρτιά.";
+			} else {
+				$info = "ΑΡΧΙΚΟ ΡΙΞΙΜΟ ΔΙΠΛΩΝ => Παρακαλώ, περίμενε τη σειρά σου ...";
+			}
+		} else if ($board->current_user_state == 0) {
+			$info = "ΑΡΧΙΚΟ ΡΙΞΙΜΟ ΔΙΠΛΩΝ => Δυστυχώς δε συμμετέχεις στο ενεργό παίξιμο! Μία άλλη φορά ...";
+		} else {
+			$info = "ΑΡΧΙΚΟ ΡΙΞΙΜΟ ΔΙΠΛΩΝ => Παρακαλώ, περίμενε ...";
+		}
 	}
 }
 ?>
@@ -75,12 +87,44 @@ if ($board == null) {
 
 		<?php if (
 			$board != null
+			&& $board->current_user_is_current_player
 			&& $board->playing_phase == 1
 			&& $board->current_user_state == 0
 		) { ?>
 			<form action="actions/go.php" method="post" target="">
 				<input type="submit" value="Πάμε">
 			</form>
+		<?php } ?>
+
+		<?php if (
+			$board != null
+			&& $board->current_user_is_current_player
+			&& $board->playing_phase == 2
+			&& $board->current_user_state == 1
+		) { ?>
+			<form action="actions/go.php" method="post" target="">
+				<label for="cards_to_throw">
+					Επίλεξε τα διπλά χαρτιά ανά ζεύγη, διαχωρίζοντας τα ζεύγη με καθέτους (π.χ. 3,24|4,16):
+				</label>
+				<textarea name="cards_to_throw" id="cards_to_throw">
+				</textarea>
+				<input type="submit" value="Πάμε">
+			</form>
+		<?php } ?>
+	</div>
+	<div class="cardarea">
+		<?php if (
+			$board != null
+			&& $board->playing_phase == 2
+		) { ?>
+			<?php foreach ($board->players as $player) {
+				$i = 1 ?>
+				<h2><?= $player->name ?></h2>
+				<?php foreach ($player->cards as $card) { ?>
+					<b>(<?= $i++ ?>)</b>
+					<em><?= $card->label ?></em>
+				<?php } ?>
+			<?php } ?>
 		<?php } ?>
 	</div>
 </body>
