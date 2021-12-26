@@ -17,17 +17,11 @@ $data = json_decode(file_get_contents("php://input"));
 if ($data) {
     // Φέρε το ενεργό παίξιμο
 
-    $playing = Playing::getActive($conn, $data->user_id);
+    $playing = Playing::getActive($conn);
 
-    // Εντόπισε τον τρέχοντα χρήστη στη λίστα των παικτών
+    // Φέρε τον τρέχοντα χρήστη-παίκτη
 
-    $player = null;
-
-    foreach ($playing['players'] as $player) {
-        if ($player['id'] == $data->user_id) {
-            break;
-        }
-    }
+    $player = Player::getById($conn, $playing['id'], $data->user_id);
 
     if ($player != null) {
         // Ρίξε τα χαρτιά που επέλεξε ο χρήστης
@@ -49,13 +43,17 @@ if ($data) {
             }
         }
 
-        // Άλλαξε την κατάσταση του χρήστη-παίκτη στην κατάσταση επιλογής χαρτιού
+        // Άλλαξε την κατάσταση του χρήστη-παίκτη σε κατάσταση "επιλογής χαρτιού"
 
-        $player = Player::getById($conn, $player['id']);
+        $playerOldState = $player['state'];
 
         $player['state'] = 2;
 
         Player::update($conn, $player);
+
+        // Άλλαξε τη φάση του ενεργού παιξίματος
+
+        $takeCurrent = false;
 
         if ($playing['phase'] == 2) {
             if (Playing::areAllPlayersInState($conn, 2, $playing['id'], $playing['player_cnt'])) { // Αν όλοι οι παίκτες έχουν ρίξει τα διπλά χαρτιά τους ...
@@ -66,9 +64,23 @@ if ($data) {
                 Playing::update($conn, $playing);
             }
 
+            $takeCurrent = true;
+        } else if ($playing['phase'] == 3) {
+            if (Player::getCardCnt($conn, $playing['id'], $player['id']) == 0) { // Αν ο τρέχων παίκτης δεν έχει χαρτιά ...
+                // ... τερμάτισε το παίξιμο
+
+                $playing['phase'] = 4;
+
+                Playing::update($conn, $playing);
+            } else if ($playerOldState == 3) {
+                $takeCurrent = true;
+            }
+        }
+
+        if ($takeCurrent) { // Αν ο τρέχων χρήστης-παίκτης χάνει τη σειρά του ...
             // Πάρε τη σειρά από τον τρέχοντα χρήστη-παίκτη
 
-            $player = Player::getById($conn, $player['id']);
+            $player = Player::getById($conn, $playing['id'], $player['id']);
 
             $player['playing_iscurrent'] = 0;
 
@@ -81,14 +93,6 @@ if ($data) {
             $nextPlayer['playing_iscurrent'] = 1;
 
             Player::update($conn, $nextPlayer);
-        } else if ($playing['phase'] == 3) {
-            if (Player::getCardCnt($conn, $player['id]']) == 0) { // Αν ο τρέχων παίκτης δεν έχει χαρτιά ...
-                // ... τερμάτισε το παίξιμο
-
-                $playing['phase'] = 4;
-
-                Playing::update($conn, $playing);
-            }
         }
     }
 

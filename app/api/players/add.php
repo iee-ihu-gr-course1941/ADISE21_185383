@@ -27,7 +27,7 @@ if ($data) {
 
     // Φέρε το ενεργό παίξιμο
 
-    $playing = Playing::getActive($conn, $data->user_id);
+    $playing = Playing::getActive($conn);
 
     // Φέρε το πλήθος των παικτών που έχουν μέχρι στιγμής ενταχθεί στο ενεργό παίξιμο
 

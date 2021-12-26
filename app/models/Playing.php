@@ -2,11 +2,13 @@
 class PLaying
 {
 
-    public static function getActive($conn, $current_user_id)
+    public static function getActive($conn)
     {
         // Φέρε το ενεργό παίξιμο
 
-        $stmt = $conn->prepare("SELECT * FROM playing WHERE active = 1");
+        $stmt = $conn->prepare("SELECT * 
+                                FROM playing 
+                                WHERE active = 1");
 
         $stmt->execute();
 
@@ -17,9 +19,10 @@ class PLaying
 
             // Φέρε τους παίκτες του ενεργού παιξίματος
 
-            $stmt = $conn->prepare("SELECT player.id, user.name
-                                    FROM player inner join user on player.id = user.id 
-                                    WHERE playing_id = ? order by player.id");
+            $stmt = $conn->prepare("SELECT player.id
+                                    FROM player
+                                    WHERE playing_id = ? 
+                                    order by player.id");
 
             $stmt->bind_param("i", $playing['id']);
 
@@ -30,34 +33,8 @@ class PLaying
             $players = [];
 
             if ($result->num_rows > 0) {
-                while ($player = $result->fetch_assoc()) { // Για κάθε παίκτη ...
-                    // ... φέρε τα χαρτιά του παίκτη
-
-                    $stmtCards = $conn->prepare("SELECT * FROM `card` WHERE player_id = ? order by player_seqno");
-
-                    $stmtCards->bind_param("i", $player['id']);
-
-                    $stmtCards->execute();
-
-                    $resultCards = $stmtCards->get_result();
-
-                    $cards = [];
-
-                    while ($card = $resultCards->fetch_assoc()) {
-                        // Μόνο τα χαρτιά του τρέχοντος χρήστη γίνονται ορατά!
-
-                        if ($player['id'] != $current_user_id) {
-                            $card['label'] = '?';
-                        } else {
-                            $card['label'] = $card['figure'] . '-' . $card['symbol'];
-                        }
-
-                        $cards[] = $card;
-                    }
-
-                    $player['cards'] = $cards;
-
-                    $players[] = $player;
+                while ($p = $result->fetch_assoc()) { 
+                    $players[] = Player::getById($conn, $playing['id'], $p['id']);
                 }
             }
 
@@ -72,10 +49,13 @@ class PLaying
     public static function add($conn, $playing)
     {
         $stmt = $conn->prepare("
-            INSERT INTO playing(`active`, `phase`, `player_cnt`)
+            INSERT INTO playing(active, phase, player_cnt)
             VALUES(?,?,?)");
 
-        $stmt->bind_param("iii", $playing['active'], $playing['phase'], $playing['player_cnt']);
+        $stmt->bind_param("iii", 
+                            $playing['active'], 
+                            $playing['phase'], 
+                            $playing['player_cnt']);
 
         if ($stmt->execute()) {
             return $conn->insert_id;
@@ -88,12 +68,25 @@ class PLaying
     {
         $stmt = $conn->prepare("
             update playing
-            set `active` = ?, 
-                `phase` = ?,
-                `player_cnt` = ?
+            set active = ?, 
+                phase = ?,
+                player_cnt = ?
             where id = ?");
 
-        $stmt->bind_param("iiii", $playing['active'], $playing['phase'], $playing['player_cnt'], $playing['id']);
+        $stmt->bind_param("iiii", 
+                            $playing['active'], 
+                            $playing['phase'], 
+                            $playing['player_cnt'], 
+                            $playing['id']);
+
+        $stmt->execute();
+    }
+
+    public static function clearActive($conn)
+    {
+        $stmt = $conn->prepare("
+            update playing
+            set active = 0");
 
         $stmt->execute();
     }
@@ -104,7 +97,9 @@ class PLaying
 
         $players = [];
 
-        $stmt = $conn->prepare("SELECT * FROM player WHERE playing_id = ?");
+        $stmt = $conn->prepare("SELECT * 
+                                FROM player 
+                                WHERE playing_id = ?");
 
         $stmt->bind_param("i", $playing['id']);
 
@@ -122,7 +117,8 @@ class PLaying
 
         $cards = [];
 
-        $stmt = $conn->prepare("SELECT * FROM `card`");
+        $stmt = $conn->prepare("SELECT * 
+                                FROM card");
 
         $stmt->execute();
 
@@ -153,12 +149,17 @@ class PLaying
             $player = $players[$i % $players_cnt];
 
             $stmt = $conn->prepare("
-            update `card`
-            set `player_id` = ?, 
-                `player_seqno` = ?
-            where `id` = ?");
+            update card
+            set player_id = ?, 
+                playing_id = ?,
+                player_seqno = ?
+            where id = ?");
 
-            $stmt->bind_param("iii", $player['id'], $i, $card['id']);
+            $stmt->bind_param("iiii", 
+                                $player['id'], 
+                                $playing['id'], 
+                                $i, 
+                                $card['id']);
 
             $stmt->execute();
 
@@ -170,7 +171,8 @@ class PLaying
     {
         $stmt = $conn->prepare("SELECT count(*) state_player_cnt 
                                FROM player  
-                               where playing_id = ? and state >= ?");
+                               where playing_id = ? 
+                                    and `state` >= ?");
 
         $stmt->bind_param("ii", $playing_id, $state);
 

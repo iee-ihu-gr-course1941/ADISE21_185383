@@ -30,20 +30,46 @@ if ($board == null) {
 	} else if ($board->playing_phase == 1) {
 		if ($board->current_user_state == 0) {
 			$info = "ΕΝΤΑΞΗ ΠΑΙΚΤΩΝ => Θέλεις να παίξεις;";
-		} else {
-			$info = "ΕΝΤΑΞΗ ΠΑΙΚΤΩΝ => Παρακαλώ, περίμενε ...";
+		} else { // current_user_state == 1
+			$info = "ΕΝΤΑΞΗ ΠΑΙΚΤΩΝ => Παρακαλώ, περίμενε να ενταχθούν και οι υπόλοιποι παίκτες ...";
 		}
 	} else if ($board->playing_phase == 2) {
 		if ($board->current_user_state == 1) {
 			if ($board->current_user_is_current_player) {
-				$info = "ΑΡΧΙΚΟ ΡΙΞΙΜΟ ΔΙΠΛΩΝ => Ρίξε τα διπλά χαρτιά.";
+				$info = "ΑΡΧΙΚΟ ΡΙΞΙΜΟ ΔΙΠΛΩΝ => Ρίξε τα διπλά χαρτιά σου.";
 			} else {
 				$info = "ΑΡΧΙΚΟ ΡΙΞΙΜΟ ΔΙΠΛΩΝ => Παρακαλώ, περίμενε τη σειρά σου ...";
 			}
 		} else if ($board->current_user_state == 0) {
 			$info = "ΑΡΧΙΚΟ ΡΙΞΙΜΟ ΔΙΠΛΩΝ => Δυστυχώς δε συμμετέχεις στο ενεργό παίξιμο! Μία άλλη φορά ...";
+		} else { // current_user_state == 2
+			$info = "ΑΡΧΙΚΟ ΡΙΞΙΜΟ ΔΙΠΛΩΝ => Παρακαλώ, περίμενε να ρίξουν και υπόλοιποι παίκτες τα διπλά χαρτιά τους ...";
+		}
+	} else if ($board->playing_phase == 3) {
+		if ($board->current_user_state == 2) {
+			if ($board->current_user_is_current_player) {
+				$info = "ΚΥΡΙΟ ΜΕΡΟΣ ΠΑΙΧΝΙΔΙΟΥ => Επίλεξε ένα χαρτί από τη βεντάλια του παίκτη " . $board->prev_player_name;
+			} else {
+				$info = "ΚΥΡΙΟ ΜΕΡΟΣ ΠΑΙΧΝΙΔΙΟΥ => Παρακαλώ, περίμενε τη σειρά σου ...";
+			}
+		} else if ($board->current_user_state == 3) {
+			if ($board->current_user_is_current_player) {
+				$info = "ΚΥΡΙΟ ΜΕΡΟΣ ΠΑΙΧΝΙΔΙΟΥ => Ρίξε τα διπλά χαρτιά σου.";
+			} else {
+				$info = "ΚΥΡΙΟ ΜΕΡΟΣ ΠΑΙΧΝΙΔΙΟΥ => Παρακαλώ, περίμενε τη σειρά σου ...";
+			}
 		} else {
-			$info = "ΑΡΧΙΚΟ ΡΙΞΙΜΟ ΔΙΠΛΩΝ => Παρακαλώ, περίμενε ...";
+			$info = "ΚΥΡΙΟ ΜΕΡΟΣ ΠΑΙΧΝΙΔΙΟΥ => Δυστυχώς δε συμμετέχεις στο ενεργό παίξιμο! Μία άλλη φορά ...";
+		}
+	} else if ($board->playing_phase == 4) {
+		if ($board->current_user_state >= 2) {
+			if ($board->current_user_card_cnt == 0) {
+				$info = "ΤΕΛΟΣ ΠΑΙΧΝΙΔΙΟΥ => Σ Υ Γ Χ Α Ρ Η Τ Η Ρ Ι Α! Είσαι ο νικητής!";
+			} else {
+				$info = "ΤΕΛΟΣ ΠΑΙΧΝΙΔΙΟΥ => Δυστυχώς, δεν είσαι ο νικητής! Καλή τύχη στο επόμενο παίξιμο.";
+			}
+		} else {
+			$info = "ΤΕΛΟΣ ΠΑΙΧΝΙΔΙΟΥ => Δυστυχώς δε συμμετέχεις στο ενεργό παίξιμο! Μία άλλη φορά ...";
 		}
 	}
 }
@@ -73,7 +99,7 @@ if ($board == null) {
 	<div class="commandbar">
 		<?php if (
 			$board != null
-			&& $board->playing_phase == 0
+			&& ($board->playing_phase == 0 || $board->playing_phase == 4)
 		) { ?>
 			<form action="actions/start.php" method="post" target="">
 				<label for="player_cnt">
@@ -81,7 +107,7 @@ if ($board == null) {
 				</label>
 				<input type="range" name="player_cnt" placeholder="Πλήθος Παικτών" id="player_cnt" min="2" max="6" value="2" step="1" oninput="onPlayerCntUpdate(value)" required>
 				<output for="player_cnt" id="player_cnt_volume">2</output>
-				<input type="submit" value="Έναρξη">
+				<input type="submit" value="Νέο παίξιμο">
 			</form>
 		<?php } ?>
 
@@ -99,8 +125,8 @@ if ($board == null) {
 		<?php if (
 			$board != null
 			&& $board->current_user_is_current_player
-			&& $board->playing_phase == 2
-			&& $board->current_user_state == 1
+			&& (($board->playing_phase == 2 && $board->current_user_state == 1)
+				|| ($board->playing_phase == 3 && $board->current_user_state == 3))
 		) { ?>
 			<form action="actions/go.php" method="post" target="">
 				<label for="cards_to_throw">
@@ -111,11 +137,26 @@ if ($board == null) {
 				<input type="submit" value="Πάμε">
 			</form>
 		<?php } ?>
+
+		<?php if (
+			$board != null
+			&& $board->current_user_is_current_player
+			&& ($board->playing_phase == 3 && $board->current_user_state == 2)
+		) { ?>
+			<form action="actions/go.php" method="post" target="">
+				<label for="card_to_pick">
+					Επίλεξε ένα χαρτί (π.χ. 7):
+				</label>
+				<textarea name="card_to_pick" id="card_to_pick">
+				</textarea>
+				<input type="submit" value="Πάμε">
+			</form>
+		<?php } ?>
 	</div>
 	<div class="cardarea">
 		<?php if (
 			$board != null
-			&& $board->playing_phase == 2
+			&& $board->playing_phase >= 2
 		) { ?>
 			<?php foreach ($board->players as $player) {
 				$i = 1 ?>

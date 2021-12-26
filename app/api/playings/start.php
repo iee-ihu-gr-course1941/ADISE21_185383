@@ -15,6 +15,10 @@ $conn = DB::getConnection();
 $data = json_decode(file_get_contents("php://input"));
 
 if ($data) {
+    // Θέσε ως ανενεργό το τελευταίο παίξιμο (αν υπάρχει)
+
+    Playing::clearActive($conn);
+
     // Δημιούργησε νέο παίξιμο
 
     $playing = array(
