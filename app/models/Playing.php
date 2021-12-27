@@ -33,7 +33,7 @@ class PLaying
             $players = [];
 
             if ($result->num_rows > 0) {
-                while ($p = $result->fetch_assoc()) { 
+                while ($p = $result->fetch_assoc()) {
                     $players[] = Player::getById($conn, $playing['id'], $p['id']);
                 }
             }
@@ -46,16 +46,64 @@ class PLaying
         }
     }
 
+    public static function history($conn)
+    {
+        // Φέρε το ενεργό παίξιμο
+
+        $stmt = $conn->prepare("SELECT * 
+                                FROM playing 
+                                WHERE phase = 4");
+
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        $playings = [];
+
+        if ($result->num_rows > 0) {
+            while ($playing = $result->fetch_assoc()) {
+                // Φέρε τους παίκτες του παιξίματος
+
+                $stmtPlayers = $conn->prepare("SELECT player.id, user.name, player.final_card_cnt
+                                    FROM player inner join user on player.id = user.id
+                                    WHERE playing_id = ?
+                                    order by final_card_cnt");
+
+                $stmtPlayers->bind_param("i", $playing['id']);
+
+                $stmtPlayers->execute();
+
+                $resultPlayers = $stmtPlayers->get_result();
+
+                $players = [];
+
+                if ($resultPlayers->num_rows > 0) {
+                    while ($p = $resultPlayers->fetch_assoc()) {
+                        $players[] = $p;
+                    }
+                }
+
+                $playing['players'] = $players;
+
+                $playings[] = $playing;
+            }
+        }
+
+        return $playings;
+    }
+
     public static function add($conn, $playing)
     {
         $stmt = $conn->prepare("
             INSERT INTO playing(active, phase, player_cnt)
             VALUES(?,?,?)");
 
-        $stmt->bind_param("iii", 
-                            $playing['active'], 
-                            $playing['phase'], 
-                            $playing['player_cnt']);
+        $stmt->bind_param(
+            "iii",
+            $playing['active'],
+            $playing['phase'],
+            $playing['player_cnt']
+        );
 
         if ($stmt->execute()) {
             return $conn->insert_id;
@@ -73,11 +121,13 @@ class PLaying
                 player_cnt = ?
             where id = ?");
 
-        $stmt->bind_param("iiii", 
-                            $playing['active'], 
-                            $playing['phase'], 
-                            $playing['player_cnt'], 
-                            $playing['id']);
+        $stmt->bind_param(
+            "iiii",
+            $playing['active'],
+            $playing['phase'],
+            $playing['player_cnt'],
+            $playing['id']
+        );
 
         $stmt->execute();
     }
@@ -155,11 +205,13 @@ class PLaying
                 player_seqno = ?
             where id = ?");
 
-            $stmt->bind_param("iiii", 
-                                $player['id'], 
-                                $playing['id'], 
-                                $i, 
-                                $card['id']);
+            $stmt->bind_param(
+                "iiii",
+                $player['id'],
+                $playing['id'],
+                $i,
+                $card['id']
+            );
 
             $stmt->execute();
 

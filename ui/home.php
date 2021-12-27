@@ -132,8 +132,7 @@ if ($board == null) {
 				<label for="cards_to_throw">
 					Επίλεξε τα διπλά χαρτιά ανά ζεύγη, διαχωρίζοντας τα ζεύγη με καθέτους (π.χ. 3,24|4,16):
 				</label>
-				<textarea name="cards_to_throw" id="cards_to_throw">
-				</textarea>
+				<textarea name="cards_to_throw" id="cards_to_throw"></textarea>
 				<input type="submit" value="Πάμε">
 			</form>
 		<?php } ?>
@@ -147,8 +146,7 @@ if ($board == null) {
 				<label for="card_to_pick">
 					Επίλεξε ένα χαρτί (π.χ. 7):
 				</label>
-				<textarea name="card_to_pick" id="card_to_pick">
-				</textarea>
+				<textarea name="card_to_pick" id="card_to_pick" required></textarea>
 				<input type="submit" value="Πάμε">
 			</form>
 		<?php } ?>

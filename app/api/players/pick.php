@@ -38,12 +38,25 @@ if ($data) {
         $pickedCard['player_seqno'] = $lastCard['player_seqno'] + 1;
 
         Card::update($conn, $pickedCard);
-        
-        // Άλλαξε την κατάσταση του χρήστη-παίκτη στην κατάσταση επιλογής χαρτιού
 
-        $player['state'] = 3;
+        // Έλεγξε μήπως ο προηγούμενος παίκτης ξέμεινε από χαρτιά γιατί,
+        // σ' αυτή την περίπτωση είναι ο νικητής!
 
-        Player::update($conn, $player);
+        if (Player::getCardCnt($conn, $playing['id'], $prevPlayer['id']) == 0) { // Αν ο προηγούμενος παίκτης δεν έχει χαρτιά ...
+            // ... τερμάτισε το παίξιμο
+
+            $playing['phase'] = 4;
+
+            Playing::update($conn, $playing);
+
+            Player::storeCardCnt($conn, $playing['id']);
+        } else {
+            // Άλλαξε την κατάσταση του χρήστη-παίκτη στην κατάσταση επιλογής χαρτιού
+
+            $player['state'] = 3;
+
+            Player::update($conn, $player);
+        }
     }
 
     http_response_code(200);

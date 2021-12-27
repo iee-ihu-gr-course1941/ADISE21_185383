@@ -214,11 +214,13 @@ class Player
             INSERT INTO player(id, playing_id, playing_iscurrent, state)
             VALUES(?,?,?,?)");
 
-        $stmt->bind_param("iiii", 
-                            $player['id'], 
-                            $player['playing_id'], 
-                            $player['playing_iscurrent'], 
-                            $player['state']);
+        $stmt->bind_param(
+            "iiii",
+            $player['id'],
+            $player['playing_id'],
+            $player['playing_iscurrent'],
+            $player['state']
+        );
 
         if ($stmt->execute()) {
             return $conn->insert_id;
@@ -235,12 +237,44 @@ class Player
                 state = ?
             where playing_id = ? and id = ?");
 
-        $stmt->bind_param("iiii", 
-                            $player['playing_iscurrent'], 
-                            $player['state'], 
-                            $player['playing_id'], 
-                            $player['id']);
+        $stmt->bind_param(
+            "iiii",
+            $player['playing_iscurrent'],
+            $player['state'],
+            $player['playing_id'],
+            $player['id']
+        );
 
         $stmt->execute();
+    }
+
+    public static function storeCardCnt($conn, $playing_id)
+    {
+        $stmt = $conn->prepare("SELECT id 
+                                FROM player 
+                                WHERE playing_id = ?");
+        $stmt->bind_param("i", $playing_id);
+
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            while ($player = $result->fetch_assoc()) {
+                $stmtUpdate = $conn->prepare("
+                update player
+                set final_card_cnt = ?
+                where playing_id = ? and id = ?");
+
+                $stmtUpdate->bind_param(
+                    "iii",
+                    self::getCardCnt($conn, $playing_id, $player["id"]),
+                    $playing_id,
+                    $player["id"]
+                );
+
+                $stmtUpdate->execute();
+            }
+        }
     }
 }

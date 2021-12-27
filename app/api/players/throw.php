@@ -72,6 +72,8 @@ if ($data) {
                 $playing['phase'] = 4;
 
                 Playing::update($conn, $playing);
+
+                Player::storeCardCnt($conn, $playing['id']);
             } else if ($playerOldState == 3) {
                 $takeCurrent = true;
             }
