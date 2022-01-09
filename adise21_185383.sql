@@ -45,8 +45,8 @@ INSERT INTO `card` (`id`, `figure`, `symbol`, `player_id`, `playing_id`, `player
 	(12, '3', 'Μπαστούνι', NULL, NULL, NULL),
 	(13, '4', 'Κούπα', NULL, NULL, NULL),
 	(14, '4', 'Σπαθί', NULL, NULL, NULL),
-	(15, '4', 'Καρό', NULL, NULL, NULL),
-	(16, '4', 'Μπαστούνι', NULL, NULL, NULL),
+	(15, '4', 'Καρό', 1, 20, 36),
+	(16, '4', 'Μπαστούνι', 1, 20, 38),
 	(17, '5', 'Κούπα', NULL, NULL, NULL),
 	(18, '5', 'Σπαθί', NULL, NULL, NULL),
 	(19, '5', 'Καρό', NULL, NULL, NULL),
@@ -55,23 +55,23 @@ INSERT INTO `card` (`id`, `figure`, `symbol`, `player_id`, `playing_id`, `player
 	(22, '6', 'Σπαθί', NULL, NULL, NULL),
 	(23, '6', 'Καρό', NULL, NULL, NULL),
 	(24, '6', 'Μπαστούνι', NULL, NULL, NULL),
-	(25, '7', 'Κούπα', NULL, NULL, NULL),
+	(25, '7', 'Κούπα', 1, 20, 18),
 	(26, '7', 'Σπαθί', NULL, NULL, NULL),
 	(27, '7', 'Καρό', NULL, NULL, NULL),
-	(28, '7', 'Μπαστούνι', NULL, NULL, NULL),
-	(29, '8', 'Κούπα', 2, 19, 42),
+	(28, '7', 'Μπαστούνι', 1, 20, 39),
+	(29, '8', 'Κούπα', NULL, NULL, NULL),
 	(30, '8', 'Σπαθί', NULL, NULL, NULL),
-	(31, '8', 'Καρό', 2, 19, 3),
+	(31, '8', 'Καρό', NULL, NULL, NULL),
 	(32, '8', 'Μπαστούνι', NULL, NULL, NULL),
 	(33, '9', 'Κούπα', NULL, NULL, NULL),
-	(34, '9', 'Σπαθί', 2, 19, 43),
+	(34, '9', 'Σπαθί', NULL, NULL, NULL),
 	(35, '9', 'Καρό', NULL, NULL, NULL),
 	(36, '9', 'Μπαστούνι', NULL, NULL, NULL),
 	(37, '10', 'Κούπα', NULL, NULL, NULL),
 	(38, '10', 'Σπαθί', NULL, NULL, NULL),
 	(39, '10', 'Καρό', NULL, NULL, NULL),
 	(40, '10', 'Μπαστούνι', NULL, NULL, NULL),
-	(41, 'K', 'Μπαστούνι', 2, 19, 41);
+	(41, 'K', 'Μπαστούνι', 1, 20, 26);
 /*!40000 ALTER TABLE `card` ENABLE KEYS */;
 
 -- Dumping structure for πίνακας adise21_185383.player
@@ -90,8 +90,8 @@ CREATE TABLE IF NOT EXISTS `player` (
 -- Dumping data for table adise21_185383.player: ~2 rows (approximately)
 /*!40000 ALTER TABLE `player` DISABLE KEYS */;
 INSERT INTO `player` (`playing_id`, `id`, `playing_iscurrent`, `state`, `final_card_cnt`) VALUES
-	(19, 1, 0, 2, 0),
-	(19, 2, 1, 2, 4);
+	(20, 1, 1, 2, 5),
+	(20, 2, 0, 2, 0);
 /*!40000 ALTER TABLE `player` ENABLE KEYS */;
 
 -- Dumping structure for πίνακας adise21_185383.playing
@@ -101,12 +101,12 @@ CREATE TABLE IF NOT EXISTS `playing` (
   `phase` smallint NOT NULL DEFAULT '0' COMMENT 'Φάση (0.Αρχική, 1.Ένταξη παικτών, 2.Αρχική απόρριψη διπλών, 3.Παιχνίδι, 4.Τερματισμός)',
   `player_cnt` smallint NOT NULL DEFAULT '0' COMMENT 'Πλήθος παικτών',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci;
 
 -- Dumping data for table adise21_185383.playing: ~1 rows (approximately)
 /*!40000 ALTER TABLE `playing` DISABLE KEYS */;
 INSERT INTO `playing` (`id`, `active`, `phase`, `player_cnt`) VALUES
-	(19, 1, 4, 2);
+	(20, 1, 4, 2);
 /*!40000 ALTER TABLE `playing` ENABLE KEYS */;
 
 -- Dumping structure for πίνακας adise21_185383.user

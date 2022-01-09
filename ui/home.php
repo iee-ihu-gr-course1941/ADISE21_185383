@@ -90,6 +90,7 @@ if ($board == null) {
 		<div>
 			<h1>Μουτζούρης</h1>
 			<h2><?= $_SESSION['userName'] ?></h2>
+			<a href="scoreBoard.php"><i class="fas fa-clipboard-list"></i>Παλαιότερα αποτελέσματα</a>
 			<a href="actions/signout.php"><i class="fas fa-sign-out-alt"></i>Αποσύνδεση</a>
 		</div>
 	</nav>
