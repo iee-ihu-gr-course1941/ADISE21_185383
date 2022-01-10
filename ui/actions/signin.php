@@ -14,7 +14,7 @@ if (
         )
     );
 
-    $url = $config['apiUrl'] . "app/api/users/checkPwd";
+    $url = $config['apiUrl'] . "app/api/users/checkPwd.php";
 
     $client = curl_init();
     curl_setopt($client, CURLOPT_URL, $url);

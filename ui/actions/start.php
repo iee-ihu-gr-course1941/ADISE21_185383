@@ -10,7 +10,7 @@ $dataJSON = json_encode(
     )
 );
 
-$url = $config['apiUrl'] . "app/api/playings/start";
+$url = $config['apiUrl'] . "app/api/playings/start.php";
 
 $client = curl_init();
 curl_setopt($client, CURLOPT_URL, $url);

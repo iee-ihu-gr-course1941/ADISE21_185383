@@ -8,7 +8,7 @@ if (!isset($_SESSION['signedin'])) {
 
 $config = include('config.php');
 
-$url = $config['apiUrl'] . "app/api/playings/board/" . $_SESSION['userId'];
+$url = $config['apiUrl'] . "app/api/playings/board.php?user_id=" . $_SESSION['userId'];
 
 $client = curl_init();
 curl_setopt($client, CURLOPT_URL, $url);

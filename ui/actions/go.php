@@ -5,7 +5,7 @@ $config = include('../config.php');
 
 // Φέρε την τρέχουσα κατάσταση του board
 
-$url = $config['apiUrl'] . "app/api/playings/board/" . $_SESSION['userId'];
+$url = $config['apiUrl'] . "app/api/playings/board.php?user_id=" . $_SESSION['userId'];
 
 $client = curl_init();
 curl_setopt($client, CURLOPT_URL, $url);
@@ -35,7 +35,7 @@ if ($board == null) {
             )
         );
 
-        $url = $config['apiUrl'] . "app/api/players/add";
+        $url = $config['apiUrl'] . "app/api/players/add.php";
 
         $client = curl_init();
         curl_setopt($client, CURLOPT_URL, $url);
@@ -66,7 +66,7 @@ if ($board == null) {
             )
         );
 
-        $url = $config['apiUrl'] . "app/api/players/throw";
+        $url = $config['apiUrl'] . "app/api/players/throw.php";
 
         $client = curl_init();
         curl_setopt($client, CURLOPT_URL, $url);
@@ -96,7 +96,7 @@ if ($board == null) {
             )
         );
 
-        $url = $config['apiUrl'] . "app/api/players/pick";
+        $url = $config['apiUrl'] . "app/api/.php";
 
         $client = curl_init();
         curl_setopt($client, CURLOPT_URL, $url);
