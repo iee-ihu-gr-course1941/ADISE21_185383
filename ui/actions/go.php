@@ -5,11 +5,15 @@ $config = include('../config.php');
 
 // Φέρε την τρέχουσα κατάσταση του board
 
-$url = $config['apiUrl'] . "app/api/playings/board.php?user_id=" . $_SESSION['userId'];
+$url = $config['apiUrl'] . "app/api/playings/board.php";
 
 $client = curl_init();
 curl_setopt($client, CURLOPT_URL, $url);
 curl_setopt($client, CURLOPT_RETURNTRANSFER, true);
+$headers = array();
+$headers[] = "X-Token: " . $_SESSION['userId'];
+curl_setopt($client, CURLOPT_HTTPHEADER, $headers);
+
 $response = curl_exec($client);
 
 curl_close($client);
@@ -17,9 +21,9 @@ curl_close($client);
 $board = json_decode($response);
 
 if ($board == null) {
-    echo 'Παρουσιάστηκε άγνωστο σφάλμα κατά την επικοινωνία με το API!';
+    echo '<p style="color:red"><b>Παρουσιάστηκε άγνωστο σφάλμα κατά την επικοινωνία με το API!</b></p>';
 } else if (isset($board->error)) {
-    echo $board->error;
+    echo '<p style="color:red"><b>' . $board->error . '</b></p>';
 } else {
     // O τρέχων χρήστης μόλις ζήτησε να ενταχθεί στο ενεργό παίξιμο ...
     if (
@@ -30,8 +34,7 @@ if ($board == null) {
 
         $dataJSON = json_encode(
             array(
-                "playing_id" => $board->playing_id,
-                "user_id" =>  $_SESSION['userId']
+                "playing_id" => $board->playing_id
             )
         );
 
@@ -41,6 +44,10 @@ if ($board == null) {
         curl_setopt($client, CURLOPT_URL, $url);
         curl_setopt($client, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($client, CURLOPT_POSTFIELDS, $dataJSON);
+        $headers = array();
+        $headers[] = "X-Token: " . $_SESSION['userId'];
+        curl_setopt($client, CURLOPT_HTTPHEADER, $headers);
+
         $response = curl_exec($client);
 
         curl_close($client);
@@ -48,9 +55,9 @@ if ($board == null) {
         $result = json_decode($response);
 
         if ($result == null) {
-            echo 'Παρουσιάστηκε άγνωστο σφάλμα κατά την επικοινωνία με το API!';
+            echo '<p style="color:red"><b>Παρουσιάστηκε άγνωστο σφάλμα κατά την επικοινωνία με το API!</b></p>';
         } else if (isset($result->error)) {
-            echo $result->error;
+            echo '<p style="color:red"><b>' . $result->error . '</b></p>';
         }
     } else if (
         ($board->playing_phase == 2 && $board->current_user_state == 1)
@@ -61,7 +68,6 @@ if ($board == null) {
         $dataJSON = json_encode(
             array(
                 "playing_id" => $board->playing_id,
-                "user_id" =>  $_SESSION['userId'],
                 "cards_to_throw" => trim($_POST['cards_to_throw'])
             )
         );
@@ -72,6 +78,10 @@ if ($board == null) {
         curl_setopt($client, CURLOPT_URL, $url);
         curl_setopt($client, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($client, CURLOPT_POSTFIELDS, $dataJSON);
+        $headers = array();
+        $headers[] = "X-Token: " . $_SESSION['userId'];
+        curl_setopt($client, CURLOPT_HTTPHEADER, $headers);
+
         $response = curl_exec($client);
 
         curl_close($client);
@@ -79,9 +89,9 @@ if ($board == null) {
         $result = json_decode($response);
 
         if ($result == null) {
-            echo 'Παρουσιάστηκε άγνωστο σφάλμα κατά την επικοινωνία με το API!';
+            echo '<p style="color:red"><b>Παρουσιάστηκε άγνωστο σφάλμα κατά την επικοινωνία με το API!</b></p>';
         } else if (isset($result->error)) {
-            echo $result->error;
+            echo '<p style="color:red"><b>' . $result->error . '</b></p>';
         }
     } else if (
         $board->playing_phase == 3 && $board->current_user_state == 2
@@ -91,17 +101,20 @@ if ($board == null) {
         $dataJSON = json_encode(
             array(
                 "playing_id" => $board->playing_id,
-                "user_id" =>  $_SESSION['userId'],
                 "card_to_pick" => trim($_POST['card_to_pick'])
             )
         );
 
-        $url = $config['apiUrl'] . "app/api/.php";
+        $url = $config['apiUrl'] . "app/api/players/pick.php";
 
         $client = curl_init();
         curl_setopt($client, CURLOPT_URL, $url);
         curl_setopt($client, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($client, CURLOPT_POSTFIELDS, $dataJSON);
+        $headers = array();
+        $headers[] = "X-Token: " . $_SESSION['userId'];
+        curl_setopt($client, CURLOPT_HTTPHEADER, $headers);
+
         $response = curl_exec($client);
 
         curl_close($client);
@@ -109,9 +122,9 @@ if ($board == null) {
         $result = json_decode($response);
 
         if ($result == null) {
-            echo 'Παρουσιάστηκε άγνωστο σφάλμα κατά την επικοινωνία με το API!';
+            echo '<p style="color:red"><b>Παρουσιάστηκε άγνωστο σφάλμα κατά την επικοινωνία με το API!</b></p>';
         } else if (isset($result->error)) {
-            echo $result->error;
+            echo '<p style="color:red"><b>' . $result->error . '</b></p>';
         }
     }
 }

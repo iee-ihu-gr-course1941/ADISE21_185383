@@ -9,6 +9,19 @@ include_once '../../infrastructure/DB.php';
 include_once '../../models/Playing.php';
 include_once '../../models/Player.php';
 
+// Έλεγχος εξουσιοδότησης
+
+if (isset($_SERVER['HTTP_X_TOKEN'])) {
+    $current_user_id = $_SERVER['HTTP_X_TOKEN'];
+}
+else {
+    http_response_code(403);
+    echo json_encode(
+        array("error" => "Δεν έχετε εξουσιοδότηση κλήσης του api!")
+    );
+    exit;
+}
+
 $conn = DB::getConnection();
 
 $data = json_decode(file_get_contents("php://input"));
@@ -17,7 +30,7 @@ if ($data) {
     // Πρόσθεσε τον χρήστη ως παίκτη
 
     $player = array(
-        "id" => $data->user_id,
+        "id" => $current_user_id,
         "playing_id" => $data->playing_id,
         "playing_iscurrent" => 0,
         "state" => 1

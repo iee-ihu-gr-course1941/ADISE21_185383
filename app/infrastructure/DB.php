@@ -10,7 +10,7 @@ class DB {
 		$conn = new mysqli(self::$host, self::$user, self::$password, self::$database, null, self::$sock);
 
 		if($conn->connect_error){
-			die("Error failed to connect to MySQL: " . $conn->connect_error);
+			die("Σφάλμα σύνδεσης με τη MySQL: " . $conn->connect_error);
 		} else {
 			return $conn;
 		}

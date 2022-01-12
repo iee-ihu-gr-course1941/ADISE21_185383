@@ -8,11 +8,17 @@ if (!isset($_SESSION['signedin'])) {
 
 $config = include('config.php');
 
+// Κάλεσε api
+
 $url = $config['apiUrl'] . "app/api/playings/scoreBoard.php";
 
 $client = curl_init();
 curl_setopt($client, CURLOPT_URL, $url);
 curl_setopt($client, CURLOPT_RETURNTRANSFER, true);
+$headers = array();
+$headers[] = "X-Token: " . $_SESSION['userId'];
+curl_setopt($client, CURLOPT_HTTPHEADER, $headers);
+
 $response = curl_exec($client);
 
 curl_close($client);
@@ -21,9 +27,9 @@ $info = null;
 $scoreBoard = json_decode($response);
 
 if ($scoreBoard == null) {
-	echo 'Παρουσιάστηκε άγνωστο σφάλμα κατά την επικοινωνία με το API!';
+	echo '<p style="color:red"><b>Παρουσιάστηκε άγνωστο σφάλμα κατά την επικοινωνία με το API!</b></p>';
 } else if (isset($scoreBoard->error)) {
-	echo $scoreBoard->error;
+	echo '<p style="color:red"><b>' . $scoreBoard->error . '</b></p>';
 } else {
 	$info = "ΑΠΟΤΕΛΕΣΜΑΤΑ ΠΑΛΑΙΟΤΕΡΩΝ ΠΑΙΧΝΙΔΙΩΝ";
 }
@@ -52,11 +58,14 @@ if ($scoreBoard == null) {
 		<h2><?= $info ?></h2>
 	</div>
 	<div>
-		<?php foreach ($scoreBoard->playings as $playing) {
-			$i = 1 ?>
-			<h2>Παίξιμο #<?= $playing->id ?></h2>
-			<?php foreach ($playing->players as $player) { ?>
-				<h3><?= $i++ ?>. <?= $player->name ?> (χαρτιά: <?= $player->final_card_cnt ?>)</h3>
+		<?php
+		if (isset($scoreBoard->playings)) {
+			foreach ($scoreBoard->playings as $playing) {
+				$i = 1 ?>
+				<h2>Παίξιμο #<?= $playing->id ?></h2>
+				<?php foreach ($playing->players as $player) { ?>
+					<h3><?= $i++ ?>. <?= $player->name ?> (χαρτιά: <?= $player->final_card_cnt ?>)</h3>
+				<?php } ?>
 			<?php } ?>
 		<?php } ?>
 	</div>

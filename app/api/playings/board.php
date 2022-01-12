@@ -5,9 +5,20 @@ include_once '../../infrastructure/DB.php';
 include_once '../../models/Playing.php';
 include_once '../../models/Player.php';
 
-$conn = DB::getConnection();
+// Έλεγχος εξουσιοδότησης
 
-$current_user_id = intval((isset($_GET['user_id']) && $_GET['user_id']) ? $_GET['user_id'] : '0');
+if (isset($_SERVER['HTTP_X_TOKEN'])) {
+    $current_user_id = $_SERVER['HTTP_X_TOKEN'];
+}
+else {
+    http_response_code(403);
+    echo json_encode(
+        array("error" => "Δεν έχετε εξουσιοδότηση κλήσης του api!")
+    );
+    exit;
+}
+
+$conn = DB::getConnection();
 
 // Φέρε το ενεργό παίξιμο
 

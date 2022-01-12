@@ -8,11 +8,16 @@ if (!isset($_SESSION['signedin'])) {
 
 $config = include('config.php');
 
-$url = $config['apiUrl'] . "app/api/playings/board.php?user_id=" . $_SESSION['userId'];
+// Κάλεσε api
+$url = $config['apiUrl'] . "app/api/playings/board.php";
 
 $client = curl_init();
 curl_setopt($client, CURLOPT_URL, $url);
 curl_setopt($client, CURLOPT_RETURNTRANSFER, true);
+$headers = array();
+$headers[] = "X-Token: " . $_SESSION['userId'];
+curl_setopt($client, CURLOPT_HTTPHEADER, $headers);
+
 $response = curl_exec($client);
 
 curl_close($client);
@@ -21,9 +26,9 @@ $info = null;
 $board = json_decode($response);
 
 if ($board == null) {
-	echo 'Παρουσιάστηκε άγνωστο σφάλμα κατά την επικοινωνία με το API!';
+	echo '<p style="color:red"><b>Παρουσιάστηκε άγνωστο σφάλμα κατά την επικοινωνία με το API!</b></p>';
 } else if (isset($board->error)) {
-	echo $board->error;
+	echo '<p style="color:red"><b>' . $board->error . '</b></p>';
 } else {
 	if ($board->playing_phase == 0) {
 		$info = "ΧΩΡΙΣ ΠΑΙΧΝΙΔΙ";

@@ -27,9 +27,9 @@ if (
     $result = json_decode($response);
 
     if ($result == null) {
-        echo 'Παρουσιάστηκε άγνωστο σφάλμα κατά την επικοινωνία με το API!';
+        echo '<p style="color:red"><b>Παρουσιάστηκε άγνωστο σφάλμα κατά την επικοινωνία με το API!</b></p>';
     } else if (isset($result->error)) {
-        echo $result->error;
+        echo '<p style="color:red"><b>' . $result->error . '</b></p>';
     } else {
         session_regenerate_id();
 

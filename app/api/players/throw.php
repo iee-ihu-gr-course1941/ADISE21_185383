@@ -10,6 +10,19 @@ include_once '../../models/Playing.php';
 include_once '../../models/Player.php';
 include_once '../../models/Card.php';
 
+// Έλεγχος εξουσιοδότησης
+
+if (isset($_SERVER['HTTP_X_TOKEN'])) {
+    $current_user_id = $_SERVER['HTTP_X_TOKEN'];
+}
+else {
+    http_response_code(403);
+    echo json_encode(
+        array("error" => "Δεν έχετε εξουσιοδότηση κλήσης του api!")
+    );
+    exit;
+}
+
 $conn = DB::getConnection();
 
 $data = json_decode(file_get_contents("php://input"));
@@ -21,7 +34,7 @@ if ($data) {
 
     // Φέρε τον τρέχοντα χρήστη-παίκτη
 
-    $player = Player::getById($conn, $playing['id'], $data->user_id);
+$player = Player::getById($conn, $playing['id'], $current_user_id);
 
     if ($player != null) {
         // Ρίξε τα χαρτιά που επέλεξε ο χρήστης
