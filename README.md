@@ -48,7 +48,7 @@ https://users.it.teithe.gr/~it185383/ADISE21_185383
 <?php
 
 	return array(
-    'apiUrl' => 'https://users.it.teithe.gr/~it185383/ADISE21_185383/'
+      'apiUrl' => 'https://users.it.teithe.gr/~it185383/ADISE21_185383/'
 	);
 ```
  * Ενημερώστε τα στοιχεία σύνδεσης με τη βάση δεδομένων στο αρχείο παραμέτρων **app/infrastructure/DB.php** του server της εφαρμογής:
